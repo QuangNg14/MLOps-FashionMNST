@@ -6,6 +6,24 @@ pipeline {
     }
 
     stages {
+        stage('Install AWS CLI') {
+            steps {
+                sh '''
+                    if ! command -v aws &> /dev/null; then
+                        echo "AWS CLI not found, installing..."
+                        if [[ "$OSTYPE" == "darwin"* ]]; then
+                            brew install awscli
+                        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+                            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
+                            unzip awscli-bundle.zip
+                            sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+                        fi
+                    fi
+                    aws --version
+                '''
+            }
+        }
+        
         stage('Checkout Repository') {
             steps {
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {
@@ -13,7 +31,7 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Set up Python') {
             steps {
                 sh '''

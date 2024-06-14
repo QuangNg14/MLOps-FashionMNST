@@ -12,18 +12,19 @@ pipeline {
                     if ! command -v aws &> /dev/null; then
                         echo "AWS CLI not found, installing..."
                         if [[ "$OSTYPE" == "darwin"* ]]; then
-                            brew install awscli
+                            curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+                            sudo installer -pkg AWSCLIV2.pkg -target /
                         elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-                            curl "https://s3.amazonaws.com/aws-cli/awscli-bundle.zip" -o "awscli-bundle.zip"
-                            unzip awscli-bundle.zip
-                            sudo ./awscli-bundle/install -i /usr/local/aws -b /usr/local/bin/aws
+                            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+                            unzip awscliv2.zip
+                            sudo ./aws/install
                         fi
                     fi
                     aws --version
                 '''
             }
         }
-        
+
         stage('Checkout Repository') {
             steps {
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {

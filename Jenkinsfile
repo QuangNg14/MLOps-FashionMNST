@@ -13,6 +13,16 @@ pipeline {
                 }
             }
         }
+        
+        stage('Set up Python') {
+            steps {
+                sh '''
+                    python3 -m pip install --upgrade pip
+                    pip3 install -r requirements.txt
+                '''
+            }
+        }
+
         stage('Configure AWS credentials') {
             steps {
                 withCredentials([string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'), 
@@ -23,15 +33,6 @@ pipeline {
                         aws configure set default.region ${AWS_DEFAULT_REGION}
                     '''
                 }
-            }
-        }
-
-        stage('Set up Python') {
-            steps {
-                sh '''
-                    python3 -m pip install --upgrade pip
-                    pip3 install -r requirements.txt
-                '''
             }
         }
 

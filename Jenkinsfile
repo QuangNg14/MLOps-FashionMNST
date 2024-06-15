@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'mrsnoo123/jenkins-agent-aws-dvc:latest'
+            args '-u root:root' // Run as root user to avoid permission issues
+        }
+    }
 
     environment {
         AWS_DEFAULT_REGION = 'us-west-2'

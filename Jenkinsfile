@@ -28,27 +28,6 @@ pipeline {
             }
         }
 
-        // stage('Configure AWS credentials') {
-        //     steps {
-        //         withCredentials([string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'), 
-        //                          string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')]) {
-        //             sh '''
-        //                 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-        //                 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-        //                 aws configure set default.region ${AWS_DEFAULT_REGION}
-        //             '''
-        //         }
-        //     }
-        // }
-
-        // stage('Other Stage') {
-        //     steps {
-        //         echo "AWS Access Key: ${env.AWS_ACCESS_KEY_ID}"
-        //         echo "AWS Secret Key: ${env.AWS_SECRET_ACCESS_KEY}"
-        //         echo "AWS Region: ${env.AWS_DEFAULT_REGION}"
-        //     }
-        // }
-
         stage('Run training') {
             steps {
                 sh '''

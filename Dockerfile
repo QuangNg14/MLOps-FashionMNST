@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libxslt1-dev \
     zlib1g-dev \
+    bash \
+    git \
     && rm -rf /var/lib/apt/lists/*
 
 # Upgrade pip to the latest version
@@ -36,3 +38,5 @@ RUN aws --version && dvc --version
 
 # Set the default command to bash
 CMD ["bash"]
+
+

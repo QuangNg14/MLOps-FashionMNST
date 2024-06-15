@@ -31,7 +31,7 @@ pipeline {
         stage('Run training') {
             steps {
                 sh '''
-                    python3 app.py
+                    python3 train.py
                     dvc push
                 '''
             }

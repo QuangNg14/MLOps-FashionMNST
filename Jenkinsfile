@@ -11,34 +11,6 @@ pipeline {
     }
 
     stages {
-        stage('Install AWS CLI and DVC') {
-            steps {
-                sh '''
-                    # Install AWS CLI
-                    if ! command -v aws &> /dev/null; then
-                        echo "AWS CLI not found, installing..."
-                        if [[ "$OSTYPE" == "darwin"* ]]; then
-                            curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
-                            sudo installer -pkg AWSCLIV2.pkg -target /
-                        elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
-                            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-                            unzip awscliv2.zip
-                            sudo ./aws/install
-                        fi
-                    fi
-
-                    # Install DVC
-                    if ! command -v dvc &> /dev/null; then
-                        echo "DVC not found, installing..."
-                        pip3 install dvc
-                    fi
-
-                    aws --version
-                    dvc --version
-                '''
-            }
-        }
-
         stage('Checkout Repository') {
             steps {
                 withCredentials([string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')]) {

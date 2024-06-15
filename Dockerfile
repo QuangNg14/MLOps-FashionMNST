@@ -31,7 +31,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 RUN pip3 install cffi
 
 # Install DVC
-RUN pip3 install dvc
+RUN pip3 install dvc-s3
 
 # Verify installations
 RUN aws --version && dvc --version

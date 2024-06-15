@@ -7,6 +7,7 @@ import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 import subprocess
 
+
 # Check for GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
@@ -15,13 +16,30 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 class StylishNN(nn.Module):
     def __init__(self):
         super(StylishNN, self).__init__()
-        self.fc1 = nn.Linear(784, 128)
-        self.fc2 = nn.Linear(128, 10)
+        self.l1 = nn.Conv2d(1, 12, (5, 5), stride=1, padding="same")
+        self.a1 = nn.ReLU()
+        self.m1 = nn.MaxPool2d(2, stride=2)
+        self.l2 = nn.Conv2d(12, 32, (5, 5), stride=1, padding=(1, 1))
+        self.a2 = nn.ReLU()
+        self.m2 = nn.MaxPool2d(2, stride=2)
+        self.flatten = nn.Flatten()
+        self.fc1 = nn.Linear(6 * 6 * 32, 600)
+        self.fc2 = nn.Linear(600, 120)
+        self.fc3 = nn.Linear(120, 10)
+        self.log_softmax = nn.LogSoftmax(dim=1)
 
     def forward(self, x):
-        x = torch.flatten(x, 1)
-        x = torch.relu(self.fc1(x))
+        x = self.l1(x)
+        x = self.a1(x)
+        x = self.m1(x)
+        x = self.l2(x)
+        x = self.a2(x)
+        x = self.m2(x)
+        x = self.flatten(x)
+        x = self.fc1(x)
         x = self.fc2(x)
+        x = self.fc3(x)
+        x = self.log_softmax(x)
         return x
 
 

@@ -28,21 +28,21 @@ pipeline {
             }
         }
 
-        stage('Pull Data from S3') {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
-                    sh '''
-                        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-                        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-                        aws configure set default.region $AWS_DEFAULT_REGION
-                        dvc pull
-                    '''
-                }
-            }
-        }
+        // stage('Pull Data from S3') {
+        //     steps {
+        //         withCredentials([
+        //             string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+        //             string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        //         ]) {
+        //             sh '''
+        //                 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        //                 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        //                 aws configure set default.region $AWS_DEFAULT_REGION
+        //                 dvc pull
+        //             '''
+        //         }
+        //     }
+        // }
 
         stage('Run Training') {
             steps {
@@ -52,21 +52,21 @@ pipeline {
             }
         }
 
-        stage('Push Data to S3') {
-            steps {
-                withCredentials([
-                    string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
-                    string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
-                ]) {
-                    sh '''
-                        aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-                        aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-                        aws configure set default.region $AWS_DEFAULT_REGION
-                        dvc push
-                    '''
-                }
-            }
-        }
+        // stage('Push Data to S3') {
+        //     steps {
+        //         withCredentials([
+        //             string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+        //             string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+        //         ]) {
+        //             sh '''
+        //                 aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+        //                 aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+        //                 aws configure set default.region $AWS_DEFAULT_REGION
+        //                 dvc push
+        //             '''
+        //         }
+        //     }
+        // }
     }
 
     post {

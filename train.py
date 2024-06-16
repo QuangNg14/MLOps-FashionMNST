@@ -7,7 +7,8 @@ import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 import subprocess
 import logging
-
+import mlflow
+import mlflow.pytorch
 
 # Check for GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -188,10 +189,18 @@ def run_training():
     model = StylishNN().to(device)
     opt = optim.SGD(model.parameters(), lr=0.01)
 
-    num_epochs = 10
-    for epoch in range(num_epochs):
-        train_loss = train(model, train_loader, opt, epoch, verbose=True)
-        valid_loss = valid(model, valid_loader)
+    num_epochs = 3
+    with mlflow.start_run() as run:
+        for epoch in range(num_epochs):
+            train_loss = train(model, train_loader, opt, epoch, verbose=True)
+            valid_loss = valid(model, valid_loader)
+
+            # Log metrics
+            mlflow.log_metric("train_loss", train_loss, step=epoch)
+            mlflow.log_metric("valid_loss", valid_loss, step=epoch)
+
+        # Log the model
+        mlflow.pytorch.log_model(model, "model")
 
     # Save the best model
     model_path = "models/best_model.pth"

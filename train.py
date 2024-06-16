@@ -13,6 +13,9 @@ import mlflow.pytorch
 # Check for GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# Set the tracking URI to the local server
+mlflow.set_tracking_uri("http://localhost:5000")
+
 
 # Model definition
 class StylishNN(nn.Module):

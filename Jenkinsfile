@@ -22,8 +22,10 @@ pipeline {
         stage('Set up Python') {
             steps {
                 sh '''
+                    python3 -m venv venv  # Create virtual environment
+                    . venv/bin/activate   # Activate virtual environment
                     python3 -m pip install --upgrade pip
-                    pip3 install -r requirements.txt
+                    pip install -r requirements.txt
                 '''
             }
         }
@@ -35,6 +37,7 @@ pipeline {
                     string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
                 ]) {
                     sh '''
+                        . venv/bin/activate  # Activate virtual environment
                         export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
                         export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
                         export AWS_DEFAULT_REGION=$AWS_DEFAULT_REGION

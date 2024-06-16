@@ -6,6 +6,7 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 import subprocess
+import logging
 
 
 # Check for GPU
@@ -144,16 +145,29 @@ def valid(model, valid_loader):
 #     return train_loader, valid_loader
 
 
-# Data loading
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+
 def load_data():
+    logger.info("Starting to load data...")
     transform = transforms.Compose([transforms.ToTensor()])
     data_path = "./data"
 
-    # Ensure data directory exists
+    # Ensure data directory exists and pull the dataset using DVC
     if not os.path.exists(data_path):
         os.makedirs(data_path)
+        logger.info("Data directory created.")
+
     # Pull the dataset using DVC if not already available
-    subprocess.run(["dvc", "pull"])
+    logger.info("Running 'dvc pull' to fetch data...")
+    result = subprocess.run(["dvc", "pull"], capture_output=True, text=True)
+    if result.returncode != 0:
+        logger.error(f"Failed to pull data: {result.stderr}")
+        raise RuntimeError(f"DVC pull failed: {result.stderr}")
+    else:
+        logger.info(f"DVC pull output: {result.stdout}")
 
     train_dataset = datasets.FashionMNIST(
         data_path, train=True, download=False, transform=transform
@@ -163,11 +177,13 @@ def load_data():
     )
     train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
     valid_loader = DataLoader(valid_dataset, batch_size=64, shuffle=False)
+    logger.info("Data loaded successfully.")
     return train_loader, valid_loader
 
 
 # Training and validation process
 def run_training():
+    logger.info("Starting training...")
     train_loader, valid_loader = load_data()
     model = StylishNN().to(device)
     opt = optim.SGD(model.parameters(), lr=0.01)
@@ -188,6 +204,7 @@ def run_training():
     subprocess.run(["git", "add", "models/best_model.pth.dvc"])
     subprocess.run(["git", "commit", "-m", "Update model"])
     subprocess.run(["dvc", "push"])
+    logger.info("Training completed.")
 
 
 if __name__ == "__main__":

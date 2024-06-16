@@ -30,6 +30,21 @@ pipeline {
             }
         }
 
+        stage('Verify AWS Credentials') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'aws-access-key-id', variable: 'AWS_ACCESS_KEY_ID'),
+                    string(credentialsId: 'aws-secret-access-key', variable: 'AWS_SECRET_ACCESS_KEY')
+                ]) {
+                    sh '''
+                        echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+                        echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY"
+                        aws s3 ls
+                    '''
+                }
+            }
+        }
+
         stage('Run Training') {
             steps {
                 withCredentials([

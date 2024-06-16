@@ -6,7 +6,8 @@ import torchvision.transforms as transforms
 import torchvision.datasets as datasets
 from torch.utils.data import DataLoader
 import subprocess
-
+import shlex
+import sys
 
 # Check for GPU
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -152,8 +153,18 @@ def load_data():
     # Ensure data directory exists
     if not os.path.exists(data_path):
         os.makedirs(data_path)
-    # Pull the dataset using DVC if not already available
-    subprocess.run(["dvc", "pull"])
+
+    # Pull the dataset using DVC if not already available with a timeout and error handling
+    try:
+        result = subprocess.run(
+            shlex.split("dvc pull"), timeout=300, capture_output=True
+        )
+        if result.returncode != 0:
+            print(f"Error during dvc pull: {result.stderr.decode('utf-8')}")
+            sys.exit(1)
+    except subprocess.TimeoutExpired:
+        print("dvc pull timed out")
+        sys.exit(1)
 
     train_dataset = datasets.FashionMNIST(
         data_path, train=True, download=False, transform=transform
